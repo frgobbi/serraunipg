@@ -13,8 +13,12 @@ if (!$_SESSION['login']) {
     headerDashboard();
     ?>
     <script type="text/javascript" src="../PianteJavascript/piante.js"></script>
-    <script src="https://d3js.org/d3.v3.min.js" language="JavaScript"></script>
-    <script src="../Library/LiquidRealTime/liquidFillGauge.js" language="JavaScript"></script>
+    <!-- Load c3.css -->
+    <link href="../Library/c3-0.7.10/c3.css" rel="stylesheet">
+
+    <!-- Load d3.js and c3.js -->
+    <script src="https://d3js.org/d3.v5.js" charset="utf-8"></script>
+    <script src="../Library/c3-0.7.10/c3.min.js"></script>
 </head>
 
 <body id="page-top" class="sidebar-toggled">
@@ -184,7 +188,10 @@ if (!$_SESSION['login']) {
 
             <!-- Modal body -->
             <div class="modal-body" id="bodyModalRealTime">
-                <button class="btn btn-block btn-ptimary" onclick="irrigatore()">INNAFFIA</button>
+                <div class='row'>
+                    <div class='col-lg-6 col-md-6 col-sm-12' id='chart'></div>
+                    <div class='col-lg-6 col-md-6 col-sm-12' id='chart'></div>
+                </div>
             </div>
 
             <!-- Modal footer -->
@@ -196,4 +203,70 @@ if (!$_SESSION['login']) {
     </div>
 </div>
 </body>
+
+<script type="text/javascript">
+    var chart = c3.generate({
+        data: {
+            columns: [
+                ['data', 0]
+            ],
+            type: 'gauge'
+        },
+        gauge: {
+//        label: {
+//            format: function(value, ratio) {
+//                return value;
+//            },
+//            show: false // to turn off the min/max labels.
+//        },
+//    min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+//    max: 100, // 100 is default
+//    units: ' %',
+//    width: 39 // for adjusting arc thickness
+        },
+        color: {
+            pattern: ['#54aedb', '#54aedb', '#54aedb', '#54aedb'], // the three color levels for the percentage values.
+            threshold: {
+//            unit: 'value', // percentage is default
+//            max: 200, // 100 is default
+                values: [30, 60, 90, 100]
+            }
+        },
+        size: {
+            height: 180
+        }
+    });
+
+    var chart2 = c3.generate({
+        data: {
+            columns: [
+                ['data', 15]
+            ],
+            type: 'gauge'
+        },
+        gauge: {
+//        label: {
+//            format: function(value, ratio) {
+//                return value;
+//            },
+//            show: false // to turn off the min/max labels.
+//        },
+//    min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+//    max: 100, // 100 is default
+//    units: ' %',
+//    width: 39 // for adjusting arc thickness
+        },
+        color: {
+            pattern: ['#54aedb', '#54aedb', '#54aedb', '#54aedb'], // the three color levels for the percentage values.
+            threshold: {
+//            unit: 'value', // percentage is default
+//            max: 200, // 100 is default
+                values: [30, 60, 90, 100]
+            }
+        },
+        size: {
+            height: 180
+        }
+    });
+</script>
 </html>
