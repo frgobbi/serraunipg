@@ -17,8 +17,8 @@ if (!$_SESSION['login']) {
     <link href="../Library/c3-0.7.10/c3.css" rel="stylesheet">
 
     <!-- Load d3.js and c3.js -->
-    <script src="https://d3js.org/d3.v5.js" charset="utf-8"></script>
-    <script src="../Library/c3-0.7.10/c3.min.js"></script>
+    <script src="../Library/gauge/justgage.js"></script>
+    <script src="../Library/gauge/raphael-2.1.4.min.js"></script>
 </head>
 
 <body id="page-top" class="sidebar-toggled">
@@ -49,22 +49,16 @@ if (!$_SESSION['login']) {
                     foreach ($pdo->query("SELECT * FROM vaso") as $row) {
                         $id_p = $row['id_vaso'];
                         $nome_pianta = $row['pianta'];
-                        echo "<div class=\"col-xl-3 col-md-6 mb-4\">"
-                            . "<a href=\"#\" onclick=\"visualizza_pianta('$id_p')\">"
+                        echo "<div class=\"col-xl-4 col-md-6 mb-4\">"
                             . "<div class=\"card border-left-success border-bottom-success shadow h-100 py-2\">"
+                            . "<div class='card-head text-center'><div class=\"h3 mb-0 font-weight-bold text-gray-800\">$nome_pianta</div></div>"
                             . "<div class=\"card-body\">"
-                            . "<div class=\"row no-gutters align-items-center\">"
-                            . "<div class=\"col mr-2\">"
-                            . "<!--<div class=\"text-xs font-weight-bold text-primary text-uppercase mb-1\">Piante</div>-->"
-                            . "<div class=\"h5 mb-0 font-weight-bold text-gray-800\">$nome_pianta</div>"
-                            . "</div>"
-                            . "<div class=\"col-auto\">"
-                            . "<i class=\"fas fa-seedling fa-3x text-gray-300\"></i>"
+                            . "<div class=\"row align-items-center\">"
+                            . "<div class='col-xl-6 col-md-6 col-sm-12' id='chartHumidity'></div>"
+                            . "<div class='col-xl-6 col-md-6 col-sm-12' id='chartTemperature'></div>"
                             . "</div>"
                             . "</div>"
                             . "</div>"
-                            . "</div>"
-                            . "</a>"
                             . "</div>";
                     }
                 } catch (PDOException $e) {
@@ -120,153 +114,72 @@ if (!$_SESSION['login']) {
         </div>
     </div>
 </div>
-<!-- The Modal -->
-<div class="modal" id="modalAdd">
-    <div class="modal-dialog">
-        <div class="modal-content">
-
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h4 class="modal-title">Nuovo Utente</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-
-            <!-- Modal body -->
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <labe for="name">Nome</labe>
-                        <input type="text" class="form-control form-control-user"
-                               id="name" placeholder="Mauro">
-                    </div>
-                    <div class="form-group">
-                        <labe for="surname">Cognome</labe>
-                        <input type="text" class="form-control form-control-user"
-                               id="surname" placeholder="Rossi">
-                    </div>
-                    <div class="form-group">
-                        <labe for="username">Usernome</labe>
-                        <input type="text" class="form-control form-control-user"
-                               id="username" placeholder="mauro_rossi">
-                    </div>
-                    <div class="form-group">
-                        <labe for="email">Email</labe>
-                        <input type="email" class="form-control form-control-user"
-                               id="email" placeholder="mauro.rossi@serraunipg.it">
-                    </div>
-                    <div class="form-group">
-                        <labe for="pwd">Password</labe>
-                        <input type="password" class="form-control form-control-user"
-                               id="pwd" placeholder="Mauro">
-                    </div>
-                    <div class="form-group">
-                        <button type="button" onclick="" class="btn btn-primary btn-user btn-block">
-                            Iscrivi
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Modal footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
-            </div>
-
-        </div>
-    </div>
-</div>
-<!-- The Modal -->
-<div class="modal fade" id="modalPianta">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h4 class="modal-title">Modal Heading</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-
-            <!-- Modal body -->
-            <div class="modal-body" id="bodyModalRealTime">
-                <div class='row'>
-                    <div class='col-lg-6 col-md-6 col-sm-12' id='chart'></div>
-                    <div class='col-lg-6 col-md-6 col-sm-12' id='chart'></div>
-                </div>
-            </div>
-
-            <!-- Modal footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-
-        </div>
-    </div>
-</div>
 </body>
 
 <script type="text/javascript">
-    var chart = c3.generate({
-        data: {
-            columns: [
-                ['data', 0]
-            ],
-            type: 'gauge'
-        },
-        gauge: {
-//        label: {
-//            format: function(value, ratio) {
-//                return value;
-//            },
-//            show: false // to turn off the min/max labels.
-//        },
-//    min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
-//    max: 100, // 100 is default
-//    units: ' %',
-//    width: 39 // for adjusting arc thickness
-        },
-        color: {
-            pattern: ['#54aedb', '#54aedb', '#54aedb', '#54aedb'], // the three color levels for the percentage values.
-            threshold: {
-//            unit: 'value', // percentage is default
-//            max: 200, // 100 is default
-                values: [30, 60, 90, 100]
-            }
-        },
-        size: {
-            height: 180
-        }
-    });
+        var gNode1 = document.createElement('div');
+        gNode1.setAttribute("class", "gauge");
 
-    var chart2 = c3.generate({
-        data: {
-            columns: [
-                ['data', 15]
-            ],
-            type: 'gauge'
-        },
-        gauge: {
-//        label: {
-//            format: function(value, ratio) {
-//                return value;
-//            },
-//            show: false // to turn off the min/max labels.
-//        },
-//    min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
-//    max: 100, // 100 is default
-//    units: ' %',
-//    width: 39 // for adjusting arc thickness
-        },
-        color: {
-            pattern: ['#54aedb', '#54aedb', '#54aedb', '#54aedb'], // the three color levels for the percentage values.
-            threshold: {
-//            unit: 'value', // percentage is default
-//            max: 200, // 100 is default
-                values: [30, 60, 90, 100]
+
+        var gauge1 = new JustGage({
+            id: "chartTemperature",
+            title: "Temperature (°C)",
+            value: 50,
+            min: 0,
+            max: 100,
+            humanFriendly: false,
+            decimals: 0,
+            counter: true
+        });
+
+        var gauge2 = new JustGage({
+            id: "chartHumidity",
+            title: "Humidity (%)",
+            value: 5,
+            min: 0,
+            max: 100,
+            humanFriendly: false,
+            decimals: 0,
+            levelColors : ['#806517','#57FEFF','#5CB3FF','#3BB9FF'],
+            counter: true
+        });
+
+        var timeLeft = 3;
+        var timerId = setInterval(countdown, 1000);
+
+        function countdown() {
+            if (timeLeft == -1) {
+                clearTimeout(timerId);
+                aggiornaDati();
+            } else {
+                console.log(3 - timeLeft);
+                var width = ((3 - timeLeft)*100)/3;
+                timeLeft--;
             }
-        },
-        size: {
-            height: 180
         }
-    });
+        function aggiornaDati(){
+            $.ajax({
+                type: "POST",
+                url: "../PianteDati/realtimePianta.php",
+                data : "pianta=1",
+                dataType: "html",
+                success: function(msg)
+                {
+                    var ogg = $.parseJSON(msg);
+
+                    gauge2.refresh(ogg.humidity,100);
+                    gauge1.refresh(ogg.temperature,100);
+                },
+                error: function()
+                {
+                    alert("Chiamata fallita, si prega di riprovare...");
+                }
+            });
+            timeLeft = 3;
+            timerId = setInterval(countdown, 1000);
+        }
+
+
+
 </script>
 </html>
