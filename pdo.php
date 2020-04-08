@@ -8,9 +8,9 @@
 
 function connessione_normale() {
     $pdo = null;
-    $host = "localhost";
-    $user = "root";
-    $password = "Francigobbi.03";
+    $host = "178.128.42.254";
+    $user = "userserra";
+    $password = "pwdserra";
     $db = "serraunipg";
     try {
         $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $password);

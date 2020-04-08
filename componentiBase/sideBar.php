@@ -107,7 +107,7 @@ function sideBar()
 
     echo "<!-- Nav Item - User -->"
         . "<li class=\"nav-item\">"
-        . "<a class=\"nav-link\" href=\"#\">"
+        . "<a class=\"nav-link\" href=\"../Grafici/grafici.php\">"
         . "<i class=\"fas fa-fw fa-chart-line\"></i>"
         . "<span>Grafici</span></a>"
         . "</li>";

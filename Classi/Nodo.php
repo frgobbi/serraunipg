@@ -17,6 +17,19 @@ class Nodo
         $this->id_vaso = $id_vaso;
     }
 
+    public function setDati()
+    {
+        include_once "../pdo.php";
+        $pdo = connessione_normale();
+        try {
+            $oggP = $pdo->query("SELECT * FROM vaso WHERE id_vaso = '$this->id_vaso'")->fetch(PDO::FETCH_OBJ);
+            $this->pianta = $oggP->pianta;
+        } catch (PDOException $pdoe) {
+            echo $pdoe->getMessage();
+        }
+        $pdo = null;
+    }
+
     public function createNodo($pianta, $descrizione, $device_eui, $app_eui, $device_address, $ns_key, $as_key)
     {
         $this->pianta = $pianta;
@@ -73,24 +86,68 @@ class Nodo
 
             $oggU = $pdo->query($sqlU)->fetch(PDO::FETCH_OBJ);
             $oggT = $pdo->query($sqlT)->fetch(PDO::FETCH_OBJ);
+
+            $s = "{";
+            $s .= "\"humidity\":\"" . ($oggU->valore * 100) / 3.3 . "\",";
+            $s .= "\"temperature\": \"$oggT->valore\"";
+            $s .= "}";
+
         } catch (PDOException $pdoe) {
             echo $pdoe->getMessage();
         }
         $pdo = null;
-        $s = "{";
-        $s .= "\"humidity\":\"$oggU->valore\",";
-        $s .= "\"temperature\": \"$oggT->valore\"";
-        $s .= "}";
         return $s;
 
     }
 
-    public function jsonGraphic()
+    public function jsonGraphic($typeSensor, $data)
     {
+        include_once "../pdo.php";
+        $pdo = connessione_normale();
+        try {
+            if(strcmp($data,"")==0 ){
+                $data = date('%Y-%m-%d');
+            }
+            //DATE_FORMAT(ora,'%H:%i') as oraF
+            $sql = " SELECT valore, ora FROM sensore WHERE type_sensor = '$typeSensor' AND id_vaso = '$this->id_vaso' AND data LIKE '$data'";
+            $arrayU = array();
 
+            $arrayO = array();
+            foreach ($pdo->query($sql) AS $row) {
+                $arrayU[] = $row['valore'];
+                $arrayO[] = $row['ora'];
+            }
+
+
+            $s = "{";
+            $s .= "\"nome\":\"$this->pianta\",";
+            $s .= "\"value\": [";
+            if (count($arrayU) > 0) {
+                $s .= $arrayU[0];
+                for ($i = 1; $i < count($arrayU); $i++) {
+                    $s .= "," . $arrayU[$i];
+                }
+            }
+            $s .= "],";
+            $s .= "\"times\": [";
+            if (count($arrayO) > 0) {
+                $s .= "\"".$arrayO[0]."\"";
+                for ($i = 1; $i < count($arrayO); $i++) {
+                    $s .= ",\"" . $arrayO[$i]."\"";
+                }
+            }
+            $s .= "]";
+            $s .= "}";
+
+        } catch (PDOException $pdoe) {
+            echo $pdoe->getMessage();
+        }
+        $pdo = null;
+        return $s;
     }
 
-    public function jsonOnegraphicDate(){
-        
+    public function jsonOnegraphicDate()
+    {
+
     }
 }

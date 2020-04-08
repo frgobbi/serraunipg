@@ -21,10 +21,9 @@ class utente
      * utente constructor.
      * @param $username
      */
-    public function __construct($username){
+    public function __construct($username = NULL){
         $this->username = $username;
     }
-
 
     public function setDati(){
         include_once "../pdo.php";
@@ -43,6 +42,9 @@ class utente
         $this->pdo = null;
     }
 
+    public function createUtente(){
+
+    }
 
     public function isUtente(){
         $esito = false;

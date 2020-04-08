@@ -124,7 +124,7 @@ if (!$_SESSION['login']) {
         var gauge1 = new JustGage({
             id: "chartTemperature",
             title: "Temperature (°C)",
-            value: 50,
+            value: 0,
             min: 0,
             max: 100,
             humanFriendly: false,
@@ -135,7 +135,7 @@ if (!$_SESSION['login']) {
         var gauge2 = new JustGage({
             id: "chartHumidity",
             title: "Humidity (%)",
-            value: 5,
+            value: 0,
             min: 0,
             max: 100,
             humanFriendly: false,
@@ -149,7 +149,7 @@ if (!$_SESSION['login']) {
 
         function countdown() {
             if (timeLeft == -1) {
-                clearTimeout(timerId);
+                clearInterval(timerId);
                 aggiornaDati();
             } else {
                 console.log(3 - timeLeft);
